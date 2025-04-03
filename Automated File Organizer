@@ -1,0 +1,27 @@
+import os
+import shutil
+
+def organize_files(directory="~/Downloads"):
+    dir_path = os.path.expanduser(directory)
+    for filename in os.listdir(dir_path):
+        file_path = os.path.join(dir_path, filename)
+        if os.path.isfile(file_path) and filename != __file__:
+            _, ext = os.path.splitext(filename)
+            ext = ext.lower().lstrip(".")
+            target_folder = os.path.join(dir_path, ext if ext else "misc")
+
+            os.makedirs(target_folder, exist_ok=True)
+
+            dest = os.path.join(target_folder, filename)
+            if os.path.exists(dest):
+                base, ext = os.path.splitext(filename)
+                counter = 1
+                while True:
+                    new_name = f"{base}_{counter}{ext}"
+                    new_dest = os.path.join(target_folder, new_name)
+                    if not os.path.exists(new_dest):
+                        shutil.move(file_path, new_dest)
+                        break
+                    counter += 1
+            else:
+                shutil.move(file_path, dest)
